@@ -32,6 +32,8 @@ import NewAlimentForm from "./components/NewAlimentForm";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CancelIcon from "@mui/icons-material/CancelOutlined";
+import CheckCircleIcon from "@mui/icons-material/CheckCircleOutline";
 
 const darkTheme = createTheme({
   palette: {
@@ -199,8 +201,7 @@ export default function App() {
               variant="outlined"
               color="error"
               onClick={() => {
-                localStorage.clear();
-                forceUpdate(updateCount + 1);
+                setEditMode("removeAllConfirm");
               }}
             >
               Rimuovi tutti gli alimenti
@@ -213,6 +214,7 @@ export default function App() {
                   return (
                     <>
                       <ListItem
+                        key={index}
                         secondaryAction={
                           <IconButton
                             edge="end"
@@ -244,6 +246,27 @@ export default function App() {
         </div>
       </Dialog>
 
+      <Dialog open={editMode === "removeAllConfirm"}>
+        <div className="p-5">
+          <p className="text-red-500 font-bold">
+            CONFERMA DI VOLER CANCELLARE TUTTI GLI ALIMENTI
+          </p>
+          <div className="flex justify-between">
+            <IconButton onClick={() => setEditMode("edit")} color="error">
+              <CancelIcon fontSize="large" />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                localStorage.clear();
+                setEditMode("edit");
+              }}
+              color="success"
+            >
+              <CheckCircleIcon fontSize="large" />
+            </IconButton>
+          </div>
+        </div>
+      </Dialog>
       <Dialog open={editMode === "add"}>
         <div className="p-3">
           <div className="flex justify-end px-2 py-1">
@@ -251,7 +274,10 @@ export default function App() {
               <CloseIcon />
             </IconButton>
           </div>
-          <NewAlimentForm setList={setList} />
+          <div className="text-xs mb-2">
+            CONTIENE TRACCE = "tr." | NON DATO = "nd"
+          </div>
+          <NewAlimentForm setList={setList} list={list} />
         </div>
       </Dialog>
     </ThemeProvider>
