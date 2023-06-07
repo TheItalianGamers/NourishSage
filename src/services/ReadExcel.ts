@@ -39,7 +39,7 @@ function addCustomAliment(aliment: any, setList: any) {
 
 async function getFile(setList: any) {
   let localAliments = JSON.parse(localStorage.getItem("aliments") || "[]");
-  const workbook = await fetch("/valori.xlsx")
+  const workbook = await fetch("/docs/valori.xlsx")
     .then((resp) => resp.arrayBuffer())
     .then((buff) => processExcelFile(buff, localAliments, setList))
     .catch((err) => console.error(err));
