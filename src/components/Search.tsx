@@ -12,6 +12,9 @@ const Search = (props: any) => {
         onChange={(event) => props.setInputValue(event.target.value)}
         variant="outlined"
         fullWidth
+        onKeyDown={(event: any) => {
+          if (event.key === "Enter") props.setDropdownOpen(true);
+        }}
       />
     </div>
   );
