@@ -72,7 +72,7 @@ const NewAlimentForm = (props: any) => {
   return (
     <form
       autoComplete="off"
-      className="flex flex-col gap-3 w-[500px] items-center"
+      className="flex flex-col gap-3 w-[100%] items-center"
       onSubmit={handleSubmit(onSubmit)}
     >
       <TextField

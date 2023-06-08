@@ -60,6 +60,8 @@ export default function App() {
 
   const [editMode, setEditMode] = useState("none");
 
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+
   if (list.length === 0) {
     getFile(setList);
   }
@@ -80,16 +82,8 @@ export default function App() {
           setEditOpen={() => {
             setEditMode("edit");
           }}
+          setDropdownOpen={setDropdownOpen}
         />
-
-        {inputValue !== "" && (
-          <Dropdown
-            inputValue={inputValue}
-            alims={alims}
-            setAlims={setAlims}
-            list={JSON.stringify(list)}
-          />
-        )}
       </div>
 
       {alims.length === 0 ? (
@@ -163,12 +157,19 @@ export default function App() {
               <PersonIcon fontSize="large"></PersonIcon>
             </span>
 
-            <Dialog open={!profileClosed}>
-              <Profile
-                setProfileClosed={setProfileClosed}
-                energyNeeded={energyNeeded}
-                setEnergyNeeded={setEnergyNeeded}
-              />
+            <Dialog
+              open={!profileClosed}
+              onKeyDown={(event: any) => {
+                if (event.keyCode == 27) setProfileClosed(true);
+              }}
+            >
+              <div className="p-5">
+                <Profile
+                  setProfileClosed={setProfileClosed}
+                  energyNeeded={energyNeeded}
+                  setEnergyNeeded={setEnergyNeeded}
+                />
+              </div>
             </Dialog>
 
             <div className="flex-1">
@@ -178,7 +179,34 @@ export default function App() {
           </div>
         </div>
       )}
-      <Dialog open={editMode === "edit"}>
+      <Dialog
+        open={isDropdownOpen}
+        onKeyDown={(event: any) => {
+          if (event.keyCode == 27) setDropdownOpen(false);
+        }}
+      >
+        <div className="p-5 flex flex-col gap-4 overflow-y-hidden">
+          <div className="flex justify-end px-2 py-1">
+            <IconButton onClick={() => setDropdownOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </div>
+          {isDropdownOpen && (
+            <Dropdown
+              inputValue={inputValue}
+              alims={alims}
+              setAlims={setAlims}
+              list={JSON.stringify(list)}
+            />
+          )}
+        </div>
+      </Dialog>
+      <Dialog
+        open={editMode === "edit"}
+        onKeyDown={(event: any) => {
+          if (event.keyCode == 27) setEditMode("none");
+        }}
+      >
         <div className="p-5 flex flex-col gap-4">
           <div className="flex justify-end px-2 py-1">
             <IconButton onClick={() => setEditMode("none")}>
@@ -246,7 +274,12 @@ export default function App() {
         </div>
       </Dialog>
 
-      <Dialog open={editMode === "removeAllConfirm"}>
+      <Dialog
+        open={editMode === "removeAllConfirm"}
+        onKeyDown={(event: any) => {
+          if (event.keyCode == 27) setEditMode("edit");
+        }}
+      >
         <div className="p-5">
           <p className="text-red-500 font-bold">
             CONFERMA DI VOLER CANCELLARE TUTTI GLI ALIMENTI
@@ -267,7 +300,12 @@ export default function App() {
           </div>
         </div>
       </Dialog>
-      <Dialog open={editMode === "add"}>
+      <Dialog
+        open={editMode === "add"}
+        onKeyDown={(event: any) => {
+          if (event.keyCode == 27) setEditMode("edit");
+        }}
+      >
         <div className="p-3">
           <div className="flex justify-end px-2 py-1">
             <IconButton onClick={() => setEditMode("edit")}>
