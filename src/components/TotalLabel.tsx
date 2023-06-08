@@ -113,6 +113,7 @@ const ElementToPrint = forwardRef((props: any, ref: any) => (
               align="center"
             >
               <p className="text-center font-medium text-white font-sans uppercase text-lg my-3">
+                {props.productName} <br />
                 Prodotto alimentare di {props.tot_grammi} g.
               </p>
             </TableCell>

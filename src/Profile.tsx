@@ -126,7 +126,14 @@ const Profile = (props: any) => {
         <span
           onClick={() => {
             props.setProfileClosed(true);
-            props.setEnergyNeeded(Math.round(energy));
+            props.setProfileInfo({
+              peso: weight,
+              altezza: height,
+              sesso: sex,
+              età: age,
+              laf: getLaf(),
+              fabbisogno: Math.round(energy),
+            });
           }}
         >
           <CloseIcon></CloseIcon>
@@ -138,71 +145,63 @@ const Profile = (props: any) => {
       </Typography>
 
       <section className="flex flex-col gap-5 w-full">
-        <div className="p-4 flex flex-row gap-10 justify-between">
-          <TextField
-            type="number"
-            value={weight || ""}
-            placeholder="(kg.)"
-            label="Peso"
-            autoComplete="off"
-            fullWidth
-            onChange={(event: any) => setWeight(event.target.value)}
-            onBlur={(event: any) => {
-              if (event.target.value < 1) setWeight(1);
-              else if (event.target.value > 200) setWeight(200);
-            }}
-            variant="outlined"
-          />
-        </div>
+        <TextField
+          type="number"
+          value={weight || ""}
+          placeholder="(kg.)"
+          label="Peso"
+          autoComplete="off"
+          fullWidth
+          onChange={(event: any) => setWeight(event.target.value)}
+          onBlur={(event: any) => {
+            if (event.target.value < 1) setWeight(1);
+            else if (event.target.value > 200) setWeight(200);
+          }}
+          variant="outlined"
+        />
 
-        <div className="p-4 flex flex-row gap-10 justify-between">
-          <TextField
-            type="number"
-            value={height || ""}
-            placeholder="(cm.)"
-            label="Altezza"
-            autoComplete="off"
-            fullWidth
-            onChange={(event: any) => setHeight(event.target.value)}
-            onBlur={(event: any) => {
-              if (event.target.value < 1) setHeight(1);
-              else if (event.target.value > 220) setHeight(220);
-            }}
-            variant="outlined"
-          />
-        </div>
+        <TextField
+          type="number"
+          value={height || ""}
+          placeholder="(cm.)"
+          label="Altezza"
+          autoComplete="off"
+          fullWidth
+          onChange={(event: any) => setHeight(event.target.value)}
+          onBlur={(event: any) => {
+            if (event.target.value < 1) setHeight(1);
+            else if (event.target.value > 220) setHeight(220);
+          }}
+          variant="outlined"
+        />
 
-        <div className="p-4 flex flex-row justify-between">
-          <TextField
-            select
-            value={sex}
-            label="Sesso"
-            fullWidth
-            onChange={(event: any) => setSex(event.target.value)}
-          >
-            <MenuItem value={"ns"}>Non selezionato</MenuItem>
-            <MenuItem value={"M"}>Maschio</MenuItem>
-            <MenuItem value={"F"}>Femmina</MenuItem>
-          </TextField>
-        </div>
+        <TextField
+          select
+          value={sex}
+          label="Sesso"
+          fullWidth
+          onChange={(event: any) => setSex(event.target.value)}
+        >
+          <MenuItem value={"ns"}>Non selezionato</MenuItem>
+          <MenuItem value={"M"}>Maschio</MenuItem>
+          <MenuItem value={"F"}>Femmina</MenuItem>
+        </TextField>
 
-        <div className="p-4 flex flex-row justify-between">
-          <TextField
-            type="number"
-            value={age || ""}
-            label="Età"
-            autoComplete="off"
-            fullWidth
-            onChange={(event: any) => setAge(event.target.value)}
-            onBlur={(event: any) => {
-              if (event.target.value < 0) setAge(0);
-              else if (event.target.value > 120) setAge(120);
-            }}
-            variant="outlined"
-          />
-        </div>
+        <TextField
+          type="number"
+          value={age || ""}
+          label="Età"
+          autoComplete="off"
+          fullWidth
+          onChange={(event: any) => setAge(event.target.value)}
+          onBlur={(event: any) => {
+            if (event.target.value < 0) setAge(0);
+            else if (event.target.value > 120) setAge(120);
+          }}
+          variant="outlined"
+        />
 
-        <div className="p-4 flex flex-row justify-between gap-3">
+        <div className="flex flex-row justify-between items-center gap-3">
           <TextField
             select
             value={laf}
@@ -211,7 +210,7 @@ const Profile = (props: any) => {
             disabled={lafDisabled}
             onChange={(event: any) => setLaf(event.target.value)}
           >
-            <MenuItem value={"ns"}>Non selezionato</MenuItem>
+            <MenuItem value={"0"}>Non selezionato</MenuItem>
             {getLaf().map((laf: number, index: number) => {
               return getLaf().length == 4 ? (
                 <MenuItem key={index} value={laf}>
@@ -246,9 +245,9 @@ const Profile = (props: any) => {
             Metabolismo basale: {Math.round(energy)} Kcal/giorno
           </Typography>
           <Typography variant="h6">
-            Fabbisogno Energetico:{" "}
-            {laf == 0.0 ? Math.round(energy) : Math.round(energy * laf)}{" "}
-            Kcal/giorno{" "}
+            &nbsp;Fabbisogno Energetico:
+            {laf == 0.0 ? Math.round(energy) : Math.round(energy * laf)}
+            Kcal/giorno
           </Typography>
           <Typography variant="h6">
             Indice di massa corporea: {imc.toFixed(2)} ({imcDescription()})

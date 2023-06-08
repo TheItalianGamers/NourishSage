@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 //components
 import Nav from "./components/Nav";
@@ -54,12 +54,19 @@ export default function App() {
   const [portion, setPortion] = useState(0);
   const [profileClosed, setProfileClosed] = useState(true);
 
-  const [energyNeeded, setEnergyNeeded] = useState(0.0); //fabbisogno calorico
-
+  const [profileInfo, setProfileInfo] = useState({
+    peso: 0.0,
+    altezza: 0,
+    sesso: "",
+    età: 0,
+    laf: 0.0,
+    fabbisogno: 0.0,
+  }); //fabbisogno calorico
+  const [productName, setProductName] = useState("");
+  const [tempName, setTempName] = useState("");
+  const [inputNameOpened, setInputNameOpened] = useState(false);
   const [temp, setTemp] = useState(0);
-
   const [editMode, setEditMode] = useState("none");
-
   const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   if (list.length === 0) {
@@ -67,10 +74,15 @@ export default function App() {
   }
 
   function passToTotLabel() {
-    setAlimsToPass([...alims]);
-    setDropUnitListToPass({ ...dropUnitList });
-    setPortion(temp);
+    if (tempName !== "") {
+      setProductName(tempName);
+      setAlimsToPass([...alims]);
+      setDropUnitListToPass({ ...dropUnitList });
+      setPortion(temp);
+    }
   }
+
+  useEffect(passToTotLabel, [inputNameOpened]);
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -134,12 +146,64 @@ export default function App() {
               InputProps={{ inputProps: { min: 0 } }}
             />
 
-            <Button onClick={passToTotLabel} variant="outlined" size="large">
+            <Button
+              onClick={() => setInputNameOpened(true)}
+              variant="outlined"
+              size="large"
+            >
               Crea etichetta totale
             </Button>
           </div>
+
+          {/* Inserimento nome */}
+
+          <Dialog
+            open={inputNameOpened}
+            onKeyDown={(event: any) => {
+              if (event.keyCode == 27) {
+                setInputNameOpened(false);
+                setTempName("");
+              }
+              if (event.key == "Enter") {
+                setInputNameOpened(false);
+                event.preventDefault();
+              }
+            }}
+          >
+            <div className="w-[300px] p-5 flex flex-col gap-2">
+              <TextField
+                placeholder="Acciuga sott'olio, sgocciolata"
+                label="Nome dell'alimento"
+                fullWidth
+                value={tempName}
+                onChange={(event: any) => setTempName(event.target.value)}
+              ></TextField>
+
+              <div className="flex flex-row justify-between gap-2">
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => {
+                    setInputNameOpened(false);
+                    setTempName("");
+                  }}
+                >
+                  Annulla
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="success"
+                  onClick={() => setInputNameOpened(false)}
+                >
+                  Conferma
+                </Button>
+              </div>
+            </div>
+          </Dialog>
+
           {alimsToPass.length > 0 && (
             <TotalLabel
+              productName={productName}
               alims={alimsToPass}
               setAlims={setAlimsToPass}
               dropUnitList={dropUnitListToPass}
@@ -154,7 +218,7 @@ export default function App() {
               onClick={() => setProfileClosed(false)}
               className="cursor-pointer"
             >
-              <PersonIcon fontSize="large"></PersonIcon>
+              <PersonIcon fontSize="large" />
             </span>
 
             <Dialog
@@ -166,15 +230,23 @@ export default function App() {
               <div className="p-5">
                 <Profile
                   setProfileClosed={setProfileClosed}
-                  energyNeeded={energyNeeded}
-                  setEnergyNeeded={setEnergyNeeded}
+                  profileInfo={profileInfo}
+                  setProfileInfo={setProfileInfo}
                 />
               </div>
             </Dialog>
 
             <div className="flex-1">
-              Fabbisogno di riferimento: {energyNeeded} kcal
-              <InsertionMenu energyNeeded={energyNeeded} />
+              <Typography variant="h6">
+                Fabbisogno di riferimento: {profileInfo["fabbisogno"]} kcal
+              </Typography>
+              <InsertionMenu
+                profileInfo={profileInfo}
+                customPortion={portion}
+                productName={productName}
+                alims={alims}
+                dropUnitList={dropUnitListToPass}
+              />
             </div>
           </div>
         </div>
